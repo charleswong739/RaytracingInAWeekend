@@ -1,7 +1,5 @@
 ﻿// main.cpp: Entry point of application
 //
-#include <iostream>
-#include <fstream>
 #include <vector>
 
 #include "bitmap.h"
@@ -28,17 +26,7 @@ int main()
 		}
 	}
 
-	std::ofstream output("output.bmp", std::ios::binary | std::ios::trunc);
-
-	if (output.is_open())
-	{
-		output.write((char*)&bmpHeader, bitmap::BMP_HEADER_SIZE);
-		output.write((char*)&dibHeader, bitmap::DIB_HEADER_SIZE);
-
-		output.write((char*)&imageBuffer[0], imageX * imageY * 4);
-
-		output.close();
-	}
+	bitmap::writeBitmap("output.bmp", &bmpHeader, &dibHeader, &imageBuffer[0], imageX * imageY * 4);
 
 	return 0;
 }

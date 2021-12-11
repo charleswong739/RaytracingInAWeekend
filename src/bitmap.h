@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include <cmath>
+
 namespace bitmap {
 
 	const uint8_t BMP_HEADER_SIZE = 14;
@@ -74,11 +76,13 @@ namespace bitmap {
 
 			rawSize = bmpWidth * bmpHeight * 4;
 
-			resHorizontal = (uint32_t) floor(dpiHorizontal * 39.3701 + 0.5);
-			resVertical = (uint32_t) floor(dpiVertical * 39.3701 + 0.5);
+			resHorizontal = (uint32_t) std::floor(dpiHorizontal * 39.3701 + 0.5);
+			resVertical = (uint32_t) std::floor(dpiVertical * 39.3701 + 0.5);
 		}
 	};
 #pragma pack(pop)
+
+	void writeBitmap(const char* filename, const BMPHeader* bmpHeader, const DIBHeader* dibHeader, const Rgba* imageBuffer, unsigned int bufferSize);
 
 }
 #endif // !RTIAW_SRC_BITMAP_H_
