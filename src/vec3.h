@@ -52,6 +52,7 @@ namespace rtiaw {
 
 	// aliases
 	using Point3 = Vec3;
+	using Color3 = Vec3;
 
 	// other utility functions
 

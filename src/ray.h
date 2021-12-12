@@ -9,18 +9,18 @@ namespace rtiaw {
 	public:
 		Ray() {}
 		Ray(const Point3& origin, const Vec3& direction)
-			: origin(origin), direction(direction) {}
+			: origin_(origin), direction_(direction) {}
 
-		Point3 origin() const { return origin; }
-		Vec3 direction() const { return direction; }
+		Point3 origin() const { return origin_; }
+		Vec3 direction() const { return direction_; }
 
 		Point3 at(double t) {
-			return origin + direction * t;
+			return origin_ + direction_ * t;
 		}
 
 	private:
-		Point3 origin;
-		Vec3 direction;
+		Point3 origin_;
+		Vec3 direction_;
 	};
 }
 
