@@ -15,9 +15,8 @@ namespace bitmap {
 
 		Rgba() {}
 
-		Rgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
-			r(r), g(g), b(b), a(a){
-		}
+		Rgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+			: r(r), g(g), b(b), a(a) {}
 	};
 
 #pragma pack(push, 1)
@@ -28,9 +27,8 @@ namespace bitmap {
 		uint16_t reserved2;
 		uint32_t offset;
 
-		BMPHeader(uint32_t size, uint32_t offset) :
-			type(0x4D42), size(size), reserved1(0), reserved2(0), offset(offset) {
-		}
+		BMPHeader(uint32_t size, uint32_t offset)
+			: type(0x4D42), size(size), reserved1(0), reserved2(0), offset(offset) {}
 
 	};
 #pragma pack(pop)
@@ -65,8 +63,8 @@ namespace bitmap {
 		uint32_t reserved3;
 		uint32_t reserved4;
 
-		DIBHeader(uint32_t bmpWidth, uint32_t bmpHeight, uint32_t dpiHorizontal, uint32_t dpiVertical) :
-			header_size(108),
+		DIBHeader(uint32_t bmpWidth, uint32_t bmpHeight, uint32_t dpiHorizontal, uint32_t dpiVertical)
+			: header_size(108), 
 			bmp_width(bmpWidth), bmp_height(bmpHeight),
 			color_plane(1), color_depth(32), compression(3),
 			num_colors(0), important_colors(0),
@@ -76,8 +74,8 @@ namespace bitmap {
 
 			raw_size = bmpWidth * bmpHeight * 4;
 
-			res_horizontal = (uint32_t) std::floor(dpiHorizontal * 39.3701 + 0.5);
-			res_vertical = (uint32_t) std::floor(dpiVertical * 39.3701 + 0.5);
+			res_horizontal = (uint32_t)std::floor(dpiHorizontal * 39.3701 + 0.5);
+			res_vertical = (uint32_t)std::floor(dpiVertical * 39.3701 + 0.5);
 		}
 	};
 #pragma pack(pop)
