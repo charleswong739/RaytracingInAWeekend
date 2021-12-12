@@ -3,30 +3,32 @@
 #include <vector>
 
 #include "bitmap.h"
+#include "color.h"
+#include "vec3.h"
+
+using rtiaw::Vec3;
 
 int main()
 {
-	const int imageX = 256;
-	const int imageY = 256;
-	int totalHeaderSize = bitmap::BMP_HEADER_SIZE + bitmap::DIB_HEADER_SIZE;
+	const int image_x = 256;
+	const int image_y = 256;
+	int total_header_size = bitmap::kBMPHeaderSize + bitmap::kDIBHeaderSize;
 
-	bitmap::BMPHeader bmpHeader(totalHeaderSize + imageX * imageY * 4, totalHeaderSize);
-	bitmap::DIBHeader dibHeader(imageX, imageY, 300, 300);
+	bitmap::BMPHeader bmp_header(total_header_size + image_x * image_y * 4, total_header_size);
+	bitmap::DIBHeader dib_header(image_x, image_y, 300, 300);
 
-	std::vector<bitmap::Rgba> imageBuffer(imageX * imageY); // buffer is read from bottom left to top right
+	std::vector<bitmap::Rgba> image_buffer(image_x * image_y); // buffer is read from bottom left to top right
 
-	for (int j = imageY - 1; j >= 0; j--) {
-		for (int i = 0; i < imageX; i++) {
+	for (int j = image_y - 1; j >= 0; j--) {
+		for (int i = 0; i < image_x; i++) {
 
-			uint32_t r = (uint32_t) (255.9999 * (double(i) / (imageX - 1)));
-			uint32_t g = (uint32_t) (255.9999 * (double(j) / (imageY - 1)));
-			uint32_t b = (uint32_t) (255.9999 * 0.25);
+			Vec3 color(double(i) / (image_x - 1), double(j) / (image_y - 1), 0.25);
 			
-			imageBuffer[j * imageY + i] = bitmap::Rgba(r, g, b, 0xFF);
+			image_buffer[j * image_y + i] = rtiaw::vec3_to_rgba(color);
 		}
 	}
 
-	bitmap::writeBitmap("output.bmp", &bmpHeader, &dibHeader, &imageBuffer[0], imageX * imageY * 4);
+	bitmap::write_bitmap("output.bmp", &bmp_header, &dib_header, &image_buffer[0], image_x * image_y * 4);
 
 	return 0;
 }

@@ -1,5 +1,5 @@
-#ifndef RTIAW_SRC_BITMAP_H_
-#define RTIAW_SRC_BITMAP_H_
+#ifndef RTIAW_BITMAP_H_
+#define RTIAW_BITMAP_H_
 
 #include <stdint.h>
 
@@ -7,8 +7,8 @@
 
 namespace bitmap {
 
-	const uint8_t BMP_HEADER_SIZE = 14;
-	const uint8_t DIB_HEADER_SIZE = 108;
+	const uint8_t kBMPHeaderSize = 14;
+	const uint8_t kDIBHeaderSize = 108;
 
 	struct Rgba {
 		uint8_t b, g, r, a;
@@ -37,52 +37,52 @@ namespace bitmap {
 
 #pragma pack(push, 1)
 	struct DIBHeader {
-		uint32_t headerSize;
+		uint32_t header_size;
 
-		uint32_t bmpWidth;
-		uint32_t bmpHeight;
+		uint32_t bmp_width;
+		uint32_t bmp_height;
 
-		uint16_t colorPlane;
-		uint16_t colorDepth;
+		uint16_t color_plane;
+		uint16_t color_depth;
 		uint32_t compression;
 
-		uint32_t rawSize;
+		uint32_t raw_size;
 
-		uint32_t resHorizontal;
-		uint32_t resVertical;
+		uint32_t res_horizontal;
+		uint32_t res_vertical;
 
-		uint32_t numColors;
-		uint32_t importantColors;
+		uint32_t num_colors;
+		uint32_t important_colors;
 
-		uint32_t rBitMask;
-		uint32_t gBitMask;
-		uint32_t bBitMask;
-		uint32_t aBitMask;
+		uint32_t r_bit_mask;
+		uint32_t g_bit_mask;
+		uint32_t b_bit_mask;
+		uint32_t a_bit_mask;
 
-		uint32_t lcsWinColorSpace;
+		uint32_t lcs_win_color_space;
 		uint32_t reserved1[9];
 		uint32_t reserved2;
 		uint32_t reserved3;
 		uint32_t reserved4;
 
 		DIBHeader(uint32_t bmpWidth, uint32_t bmpHeight, uint32_t dpiHorizontal, uint32_t dpiVertical) :
-			headerSize(108),
-			bmpWidth(bmpWidth), bmpHeight(bmpHeight),
-			colorPlane(1), colorDepth(32), compression(3),
-			numColors(0), importantColors(0),
-			aBitMask(0xFF000000), rBitMask(0x00FF0000), gBitMask(0x0000FF00), bBitMask(0x000000FF),
-			lcsWinColorSpace(0x57696E20), // little endian "win"
+			header_size(108),
+			bmp_width(bmpWidth), bmp_height(bmpHeight),
+			color_plane(1), color_depth(32), compression(3),
+			num_colors(0), important_colors(0),
+			a_bit_mask(0xFF000000), r_bit_mask(0x00FF0000), g_bit_mask(0x0000FF00), b_bit_mask(0x000000FF),
+			lcs_win_color_space(0x57696E20), // little endian "win"
 			reserved2(0), reserved3(0), reserved4(0) {
 
-			rawSize = bmpWidth * bmpHeight * 4;
+			raw_size = bmpWidth * bmpHeight * 4;
 
-			resHorizontal = (uint32_t) std::floor(dpiHorizontal * 39.3701 + 0.5);
-			resVertical = (uint32_t) std::floor(dpiVertical * 39.3701 + 0.5);
+			res_horizontal = (uint32_t) std::floor(dpiHorizontal * 39.3701 + 0.5);
+			res_vertical = (uint32_t) std::floor(dpiVertical * 39.3701 + 0.5);
 		}
 	};
 #pragma pack(pop)
 
-	void writeBitmap(const char* filename, const BMPHeader* bmpHeader, const DIBHeader* dibHeader, const Rgba* imageBuffer, unsigned int bufferSize);
+	void write_bitmap(const char* filename, const BMPHeader* bmpHeader, const DIBHeader* dibHeader, const Rgba* imageBuffer, unsigned int bufferSize);
 
 }
 #endif // !RTIAW_SRC_BITMAP_H_
