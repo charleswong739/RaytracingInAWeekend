@@ -14,7 +14,7 @@ namespace rtiaw {
 		Point3 origin() const { return origin_; }
 		Vec3 direction() const { return direction_; }
 
-		Point3 at(double t) {
+		Point3 at(double t) const {
 			return origin_ + direction_ * t;
 		}
 
