@@ -4,6 +4,6 @@
 cmake_minimum_required (VERSION 3.8)
 
 # Add source to this project's executable.
-add_executable (RaytracingInAWeekend "main.cpp"  "bitmap.cpp" "vec3.h" "color.h" "ray.h")
+add_executable (RaytracingInAWeekend "main.cc"  "bitmap.cc" "vec3.h" "color.h" "ray.h" "sphere.h")
 
 # TODO: Add tests and install targets if needed.
