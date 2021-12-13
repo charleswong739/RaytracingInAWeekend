@@ -5,6 +5,18 @@
 
 namespace rtiaw {
 
+	struct HitRecord {
+		Point3 p;
+		Vec3 normal;
+		double t;
+		bool front_face; // whether the ray is hitting the outside of the mesh
+
+		inline void set_face_normal(const Ray& ray, const Vec3& outward_normal) {
+			front_face = rtiaw::dot(ray.direction(), outward_normal) < 0.0;
+			normal = front_face ? outward_normal : -outward_normal;
+		}
+	};
+
 	class Ray {
 	public:
 		Ray() {}
