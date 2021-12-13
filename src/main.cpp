@@ -18,15 +18,15 @@ double hit_sphere(const Point3& center, double radius, const Ray& ray) {
 	// given the center and radius of a sphere, calculate the t value
 	// for the ray on the closest hit point, or -1 if none was found
 	Vec3 oc = ray.origin() - center;
-	double a = rtiaw::dot(ray.direction(), ray.direction());
-	double b = 2.0 * dot(oc, ray.direction());
-	double c = rtiaw::dot(oc, oc) - radius * radius;
-	double discriminant = b * b - 4 * a * c;
+	double a = ray.direction().square_length();
+	double half_b = dot(oc, ray.direction());
+	double c = oc.square_length() - radius * radius;
+	double discriminant = half_b * half_b -  a * c;
 	if (discriminant < 0) {
 		return -1.0;
 	}
 	else {
-		return (-b - std::sqrt(discriminant)) / (2.0 * a);
+		return (-half_b - std::sqrt(discriminant)) / a;
 	}
 }
 
@@ -57,7 +57,7 @@ int main()
 	// Image setup
 	const double aspect_ratio = 16.0f / 9.0f;
 	const unsigned int image_width = 1920;
-	const unsigned int image_height = (unsigned int)(image_width / aspect_ratio);
+	const unsigned int image_height = (unsigned int)std::floor(image_width / aspect_ratio + 0.5);
 
 	// World setup
 	Point3 origin;
