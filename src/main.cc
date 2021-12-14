@@ -7,47 +7,29 @@
 #include "bitmap.h"
 #include "color.h"
 #include "ray.h"
+#include "util.h"
 #include "vec3.h"
+#include "world.h"
 
 using rtiaw::Vec3;
 using rtiaw::Point3;
 using rtiaw::Color3;
 using rtiaw::Ray;
 
-double hit_sphere(const Point3& center, double radius, const Ray& ray) {
-	// given the center and radius of a sphere, calculate the t value
-	// for the ray on the closest hit point, or -1 if none was found
-	Vec3 oc = ray.origin() - center;
-	double a = ray.direction().square_length();
-	double half_b = dot(oc, ray.direction());
-	double c = oc.square_length() - radius * radius;
-	double discriminant = half_b * half_b -  a * c;
-	if (discriminant < 0) {
-		return -1.0;
-	}
-	else {
-		return (-half_b - std::sqrt(discriminant)) / a;
-	}
-}
-
-Color3 ray_color(const Ray& ray) {
+Color3 ray_color(const Ray& ray, const rtiaw::World& world) {
 	// calculates the color a ray should be
-	Point3 sphere_center(0, 0, -1);
-	double sphere_radius = 0.5;
+	rtiaw::HitRecord hit_record;
+	world.resolve(ray, 0.0, rtiaw::infinity, hit_record);
 
-	double t = hit_sphere(sphere_center, sphere_radius, ray);
+	//double t = hit_sphere(sphere_center, sphere_radius, ray);
 
-	if (t > 0.0) {
-		// unit normal is the normalized vector from the sphere center pointing to the hit point
-		Vec3 sphere_normal = rtiaw::normalize(ray.at(t) - sphere_center);
-
-		// scale normal values to [0, 1], make it a color
-		return 0.5 * Color3(sphere_normal.x() + 1, sphere_normal.y() + 1, sphere_normal.z() + 1);
+	if (hit_record.t < rtiaw::infinity) { // hit_record is initialized with t = infinity
+		return 0.5 * (hit_record.normal + Color3(1, 1, 1));
 	}
 
 	// lerp from blue to white depending on Y coordinate, draw sky
 	Vec3 normalized_direction = rtiaw::normalize(ray.direction());
-	t = (normalized_direction.y() + 1.0) * 0.5; // if reach here, that means ray did not hit sphere, so overwrite t with sky value
+	auto t = (normalized_direction.y() + 1.0) * 0.5; // if reach here, that means ray did not hit sphere, so overwrite t with sky value
 
 	return (1.0 - t) * Color3(1.0, 1.0, 1.0) + t * Color3(0.5, 0.7, 1.0);
 }
@@ -61,6 +43,10 @@ int main()
 
 	// World setup
 	Point3 origin;
+
+	rtiaw::World world;
+	world.addObject(rtiaw::Sphere(Point3(0, 0, -1), 0.5));
+	world.addObject(rtiaw::Sphere(Point3(0, -100.5, -1), 100));
 
 	// Camera setup
 	double viewport_height = 2.0f;
@@ -95,7 +81,7 @@ int main()
 
 			Ray cast(origin, viewport_bottom_left + u * viewport_horizontal + v * viewport_vertical - origin);
 			
-			image_buffer[j * image_width + i] = rtiaw::vec3_to_rgba(ray_color(cast));
+			image_buffer[j * image_width + i] = rtiaw::vec3_to_rgba(ray_color(cast, world));
 		}
 	}
 
