@@ -2,7 +2,6 @@
 #define RTIAW_MAIN_H_
 
 #include <limits>
-#include <random>
 
 namespace rtiaw {
 
@@ -16,9 +15,7 @@ namespace rtiaw {
 	}
 
 	inline double random_double() {
-		static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-		static std::mt19937 generator;
-		return distribution(generator);
+		return std::rand() / (RAND_MAX + 1.0);
 	}
 
 	inline double clamp(double x, double min, double max) {
