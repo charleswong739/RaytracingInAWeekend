@@ -3,6 +3,8 @@
 
 #include <cmath>
 
+#include "util.h"
+
 namespace rtiaw {
 
 	class Vec3 {
@@ -98,6 +100,14 @@ namespace rtiaw {
 
 	inline Vec3 normalize(const Vec3& v) {
 		return v / v.length();
+	}
+
+	inline Vec3 clamp(const Vec3& v, double min, double max) {
+		return Vec3(
+			clamp(v[0], min, max),
+			clamp(v[1], min, max),
+			clamp(v[2], min, max)
+		);
 	}
 
 }

@@ -11,7 +11,7 @@ namespace rtiaw {
 		Camera(Point3 origin, double aspect_ratio, double viewport_height, double focal_length)
 			: origin_(origin) {
 
-			viewport_width_ = aspect_ratio * viewport_height;
+			auto viewport_width = aspect_ratio * viewport_height;
 
 			viewport_horizontal_ = Vec3(viewport_width, 0, 0);
 			viewport_vertical_ = Vec3(0, viewport_height, 0);
@@ -20,7 +20,7 @@ namespace rtiaw {
 		}
 
 		Ray get_ray(double u, double v) const {
-			return Ray(origin, viewport_bottom_left_ + u * viewport_horizontal_ + v * viewport_vertical_ - origin_);
+			return Ray(origin_, viewport_bottom_left_ + u * viewport_horizontal_ + v * viewport_vertical_ - origin_);
 		}
 
 	private:

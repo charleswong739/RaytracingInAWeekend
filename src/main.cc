@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "bitmap.h"
+#include "camera.h"
 #include "color.h"
 #include "ray.h"
 #include "util.h"
@@ -21,8 +22,6 @@ Color3 ray_color(const Ray& ray, const rtiaw::World& world) {
 	rtiaw::HitRecord hit_record;
 	world.resolve(ray, 0.0, rtiaw::infinity, hit_record);
 
-	//double t = hit_sphere(sphere_center, sphere_radius, ray);
-
 	if (hit_record.t < rtiaw::infinity) { // hit_record is initialized with t = infinity
 		return 0.5 * (hit_record.normal + Color3(1, 1, 1));
 	}
@@ -38,8 +37,9 @@ int main()
 {
 	// Image setup
 	const double aspect_ratio = 16.0f / 9.0f;
-	const unsigned int image_width = 1920;
-	const unsigned int image_height = (unsigned int)std::floor(image_width / aspect_ratio + 0.5);
+	const unsigned int image_height = 720;
+	const unsigned int image_width = (unsigned int)std::floor(image_height * aspect_ratio + 0.5);
+	const unsigned int samples_per_pixel = 100;
 
 	// World setup
 	Point3 origin;
@@ -49,13 +49,7 @@ int main()
 	world.addObject(rtiaw::Sphere(Point3(0, -100.5, -1), 100));
 
 	// Camera setup
-	double viewport_height = 2.0f;
-	double viewport_width = aspect_ratio * viewport_height;
-	double focal_length = 1.0;
-
-	Vec3 viewport_horizontal(viewport_width, 0, 0);
-	Vec3 viewport_vertical(0, viewport_height, 0);
-	Point3 viewport_bottom_left = origin - viewport_horizontal / 2 - viewport_vertical / 2 - Vec3(0, 0, focal_length);
+	rtiaw::Camera camera(origin, aspect_ratio, 2.0, 1.0);
 
 	// Bitmap output setup
 	int total_header_size = bitmap::kBMPHeaderSize + bitmap::kDIBHeaderSize;
@@ -72,24 +66,33 @@ int main()
 	// Time begin
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
+	unsigned int completion_counter = 0;
 	// Render
 	for (int j = image_height - 1; j >= 0; j--) {
-		for (int i = 0; i < image_width; i++) {
+		for (int i = 0; i < image_width; i++, completion_counter++) {
 
-			double u = double(i) / (image_width - 1);
-			double v = double(j) / (image_height - 1);
+			// shoot samples_per_pixel number of random rays and average color results
+			Color3 pixel_color;
+			for (int k = 0; k < samples_per_pixel; k++) {
 
-			Ray cast(origin, viewport_bottom_left + u * viewport_horizontal + v * viewport_vertical - origin);
-			
-			image_buffer[j * image_width + i] = rtiaw::vec3_to_rgba(ray_color(cast, world));
+				double u = (i + rtiaw::random_double()) / (image_width - 1);
+				double v = (j + rtiaw::random_double()) / (image_height - 1);
+
+				pixel_color += ray_color(camera.get_ray(u, v), world);
+			}
+
+			// find average
+			Vec3 averaged_color = rtiaw::clamp(pixel_color / samples_per_pixel, 0.0, 0.999);
+			image_buffer[j * image_width + i] = rtiaw::vec3_to_rgba(averaged_color);
 		}
+		//std::cout << "Progress: " << (completion_counter + 0.0) / (image_width * image_height) << "% [" << completion_counter << "/" << image_width * image_height << "]" << std::endl;
 	}
 
 	// Time end
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-	//std::cout << "Render took: " << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) / 1000000.0 << "s" << std::endl;
-	std::cout << "Render took: " << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) / 1000.0 << "ms" << std::endl;
+	std::cout << "Render took: " << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) / 1000000.0 << "s" << std::endl;
+	//std::cout << "Render took: " << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) / 1000.0 << "ms" << std::endl;
 	//std::cout << "Render took: " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "\xE6s" << std::endl;
 	//std::cout << "Render took: " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
 
