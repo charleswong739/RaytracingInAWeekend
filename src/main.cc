@@ -17,13 +17,19 @@ using rtiaw::Point3;
 using rtiaw::Color3;
 using rtiaw::Ray;
 
-Color3 ray_color(const Ray& ray, const rtiaw::World& world) {
+Color3 ray_color(const Ray& ray, const rtiaw::World& world, unsigned int depth) {
+	// bounce limit reached, return black, no added color
+	if (depth <= 0) {
+		return Color3();
+	}
+
 	// calculates the color a ray should be
 	rtiaw::HitRecord hit_record;
 	world.resolve(ray, 0.0, rtiaw::infinity, hit_record);
 
 	if (hit_record.t < rtiaw::infinity) { // hit_record is initialized with t = infinity
-		return 0.5 * (hit_record.normal + Color3(1, 1, 1));
+		Point3 bounce_target = hit_record.p + hit_record.normal + rtiaw::random_unit_vector();
+		return 0.5 * ray_color(Ray(hit_record.p, bounce_target - hit_record.p), world, depth - 1);
 	}
 
 	// lerp from blue to white depending on Y coordinate, draw sky
@@ -37,9 +43,10 @@ int main()
 {
 	// Image setup
 	const double aspect_ratio = 16.0f / 9.0f;
-	const unsigned int image_height = 1080;
+	const unsigned int image_height = 360;
 	const unsigned int image_width = (unsigned int)std::floor(image_height * aspect_ratio + 0.5);
 	const unsigned int samples_per_pixel = 100;
+	const unsigned int max_bounces = 4;
 
 	// World setup
 	Point3 origin;
@@ -78,7 +85,7 @@ int main()
 				double u = (i + rtiaw::random_double()) / (image_width - 1);
 				double v = (j + rtiaw::random_double()) / (image_height - 1);
 
-				pixel_color += ray_color(camera.get_ray(u, v), world);
+				pixel_color += ray_color(camera.get_ray(u, v), world, max_bounces);
 			}
 
 			// find average

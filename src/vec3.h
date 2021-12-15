@@ -2,6 +2,7 @@
 #define RTIAW_VEC3_H_
 
 #include <cmath>
+#include <random>
 
 #include "util.h"
 
@@ -108,6 +109,16 @@ namespace rtiaw {
 			clamp(v[1], min, max),
 			clamp(v[2], min, max)
 		);
+	}
+
+	inline Vec3 random_unit_vector() {
+		// https://math.stackexchange.com/questions/87230/picking-random-points-in-the-volume-of-sphere-with-uniform-probability/87238#87238
+
+		// generate vector from normal distribution
+		std::normal_distribution<double> normal(0.0, 1.0);
+		std::mt19937 generator;
+
+		return normalize(Vec3(normal(generator), normal(generator), normal(generator)));
 	}
 
 }
