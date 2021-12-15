@@ -25,7 +25,7 @@ Color3 ray_color(const Ray& ray, const rtiaw::World& world, unsigned int depth) 
 
 	// calculates the color a ray should be
 	rtiaw::HitRecord hit_record;
-	world.resolve(ray, 0.0, rtiaw::infinity, hit_record);
+	world.resolve(ray, 0.0001, rtiaw::infinity, hit_record);
 
 	if (hit_record.t < rtiaw::infinity) { // hit_record is initialized with t = infinity
 		Point3 bounce_target = hit_record.p + hit_record.normal + rtiaw::random_unit_vector();
@@ -43,10 +43,10 @@ int main()
 {
 	// Image setup
 	const double aspect_ratio = 16.0f / 9.0f;
-	const unsigned int image_height = 360;
+	const unsigned int image_height = 1080;
 	const unsigned int image_width = (unsigned int)std::floor(image_height * aspect_ratio + 0.5);
-	const unsigned int samples_per_pixel = 100;
-	const unsigned int max_bounces = 4;
+	const unsigned int samples_per_pixel = 200;
+	const unsigned int max_bounces = 50;
 
 	// World setup
 	Point3 origin;
@@ -90,7 +90,12 @@ int main()
 
 			// find average
 			Vec3 averaged_color = rtiaw::clamp(pixel_color / samples_per_pixel, 0.0, 0.999);
-			image_buffer[j * image_width + i] = rtiaw::vec3_to_rgba(averaged_color);
+
+			// apply gamma correction for gamma = 2
+			Vec3 gamma_corrected = Vec3(sqrt(averaged_color[0]), sqrt(averaged_color[1]), sqrt(averaged_color[2]));
+
+			// write value
+			image_buffer[j * image_width + i] = rtiaw::vec3_to_rgba(gamma_corrected);
 		}
 		//std::cout << "Progress: " << (completion_counter + 0.0) / (image_width * image_height) << "% [" << completion_counter << "/" << image_width * image_height << "]" << std::endl;
 	}

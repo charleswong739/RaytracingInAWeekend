@@ -112,13 +112,11 @@ namespace rtiaw {
 	}
 
 	inline Vec3 random_unit_vector() {
-		// https://math.stackexchange.com/questions/87230/picking-random-points-in-the-volume-of-sphere-with-uniform-probability/87238#87238
-
-		// generate vector from normal distribution
-		std::normal_distribution<double> normal(0.0, 1.0);
-		std::mt19937 generator;
-
-		return normalize(Vec3(normal(generator), normal(generator), normal(generator)));
+		while (true) {
+			auto p = Vec3(random_double(-1, 1), random_double(-1, 1), random_double(-1, 1));
+			if (p.square_length() < 1)
+				return normalize(p);
+		}
 	}
 
 }
