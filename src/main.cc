@@ -7,6 +7,7 @@
 #include "bitmap.h"
 #include "camera.h"
 #include "color.h"
+#include "material.h"
 #include "ray.h"
 #include "util.h"
 #include "vec3.h"
@@ -28,8 +29,13 @@ Color3 ray_color(const Ray& ray, const rtiaw::World& world, unsigned int depth) 
 	world.resolve(ray, 0.0001, rtiaw::infinity, hit_record);
 
 	if (hit_record.t < rtiaw::infinity) { // hit_record is initialized with t = infinity
-		Point3 bounce_target = hit_record.p + hit_record.normal + rtiaw::random_unit_vector();
-		return 0.5 * ray_color(Ray(hit_record.p, bounce_target - hit_record.p), world, depth - 1);
+
+		Ray scatter;
+		Color3 attenuation;
+
+		hit_record.material->scatter(ray, hit_record, attenuation, scatter);
+
+		return attenuation * ray_color(scatter, world, depth - 1);
 	}
 
 	// lerp from blue to white depending on Y coordinate, draw sky
@@ -52,8 +58,22 @@ int main()
 	Point3 origin;
 
 	rtiaw::World world;
-	world.addObject(rtiaw::Sphere(Point3(0, 0, -1), 0.5));
-	world.addObject(rtiaw::Sphere(Point3(0, -100.5, -1), 100));
+
+	rtiaw::Material red_albedo(Color3(1.0, 0.0, 0.0));
+	rtiaw::Sphere red_sphere(Point3(-1, 0, -1), 0.25, &red_albedo);
+
+	rtiaw::Material green_albedo(Color3(0.0, 1.0, 0.0));
+	rtiaw::Sphere green_sphere(Point3(0, 0, -1), 0.25, &green_albedo);
+
+	rtiaw::Material blue_albedo(Color3(0.0, 0.0, 1.0));
+	rtiaw::Sphere blue_sphere(Point3(1, 0, -1), 0.25, &blue_albedo);
+
+	rtiaw::Material ground(Color3(0.4078, 0.7020, 0.4863));
+
+	world.addObject(red_sphere);
+	world.addObject(green_sphere);
+	world.addObject(blue_sphere);
+	world.addObject(rtiaw::Sphere(Point3(0, -100.5, -1), 100, &ground));
 
 	// Camera setup
 	rtiaw::Camera camera(origin, aspect_ratio, 2.0, 1.0);

@@ -49,6 +49,11 @@ namespace rtiaw {
 			return e_[0] * e_[0] + e_[1] * e_[1] + e_[2] * e_[2];
 		}
 
+		bool near_zero() const {
+			auto margin = 1e-8;
+			return (fabs(e_[0]) < margin) && (fabs(e_[1]) < margin) && (fabs(e_[2]) < margin);
+		}
+
 	private:
 		double e_[3];
 	};
@@ -81,6 +86,10 @@ namespace rtiaw {
 
 	inline Vec3 operator*(const double d, const Vec3& v) {
 		return v * d;
+	}
+
+	inline Vec3 operator*(const Vec3& u, const Vec3& v) {
+		return Vec3(u[0] * v[0], u[1] * v[1], u[2] * v[2]);
 	}
 
 	inline Vec3 operator/(const Vec3& v, const double d) {

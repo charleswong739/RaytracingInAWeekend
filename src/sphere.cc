@@ -28,6 +28,6 @@ void rtiaw::Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& h
 		hit_record.p = ray.at(root);
 		Vec3 outward_normal = (hit_record.p - center_) / radius_;
 		hit_record.set_face_normal(ray, outward_normal);
-
+		hit_record.material = material_;
 	}
 }

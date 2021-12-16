@@ -5,6 +5,9 @@
 #include "vec3.h"
 
 namespace rtiaw {
+
+	class Material;
+
 	class Ray {
 	public:
 		Ray() {}
@@ -26,6 +29,7 @@ namespace rtiaw {
 	struct HitRecord {
 		Point3 p;
 		Vec3 normal;
+		Material* material;
 		double t;
 		bool front_face; // whether the ray is hitting the outside of the mesh
 
