@@ -10,7 +10,7 @@ namespace rtiaw {
 		Sphere() {}
 		Sphere(Point3 center, double radius) : center_(center), radius_(radius) {}
 
-		bool hit(const Ray& ray, double t_min, double t_max, HitRecord& hit_record) const;
+		void hit(const Ray& ray, double t_min, double t_max, HitRecord& hit_record) const;
 
 	private:
 		Point3 center_;

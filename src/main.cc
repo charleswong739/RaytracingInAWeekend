@@ -43,10 +43,10 @@ int main()
 {
 	// Image setup
 	const double aspect_ratio = 16.0f / 9.0f;
-	const unsigned int image_height = 1080;
+	const unsigned int image_height = 720;
 	const unsigned int image_width = (unsigned int)std::floor(image_height * aspect_ratio + 0.5);
-	const unsigned int samples_per_pixel = 200;
-	const unsigned int max_bounces = 50;
+	const unsigned int samples_per_pixel = 100;
+	const unsigned int max_bounces = 20;
 
 	// World setup
 	Point3 origin;
