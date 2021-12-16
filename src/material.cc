@@ -6,7 +6,7 @@
 bool rtiaw::Material::scatter(const Ray& ray_in, const HitRecord& hit_record, Color3& attenuation, Ray& scattered) const
 {
 
-	attenuation = albedo_;
+	attenuation = base_color_;
 
 	if (metalness_) {
 		auto reflected_ray = reflect(normalize(ray_in.direction()), hit_record.normal);

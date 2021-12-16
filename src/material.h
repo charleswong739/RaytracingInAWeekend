@@ -9,15 +9,15 @@ namespace rtiaw {
 	class Material {
 	public:
 		Material() {}
-		Material(const Color3& albedo, double glossiness = 1, bool metalness = false) 
-			: albedo_(albedo), 
+		Material(const Color3& base_color, double glossiness = 1, bool metalness = false) 
+			: base_color_(base_color), 
 			glossiness_(glossiness < 1 ? glossiness : 1), 
 			metalness_(metalness) {}
 
 		bool scatter(const Ray& ray_in, const HitRecord& hit_record, Color3& attenuation, Ray& scattered) const;
 
 	private:
-		Color3 albedo_;
+		Color3 base_color_;
 		double glossiness_;
 		bool metalness_;
 	};
