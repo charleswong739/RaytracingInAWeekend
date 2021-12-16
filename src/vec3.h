@@ -120,12 +120,21 @@ namespace rtiaw {
 		);
 	}
 
-	inline Vec3 random_unit_vector() {
+	inline Vec3 random_in_unit_sphere() {
 		while (true) {
 			auto p = Vec3(random_double(-1, 1), random_double(-1, 1), random_double(-1, 1));
 			if (p.square_length() < 1)
-				return normalize(p);
+				return p;
 		}
+	}
+
+	inline Vec3 random_unit_vector() {
+		return normalize(random_in_unit_sphere());
+	}
+
+	
+	inline Vec3 reflect(const Vec3& v, const Vec3& n) {
+		return v - 2 * dot(v, n) * n;
 	}
 
 }

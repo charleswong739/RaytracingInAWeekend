@@ -9,12 +9,17 @@ namespace rtiaw {
 	class Material {
 	public:
 		Material() {}
-		Material(const Color3& albedo) : albedo_(albedo) {}
+		Material(const Color3& albedo, double glossiness = 1, bool metalness = false) 
+			: albedo_(albedo), 
+			glossiness_(glossiness < 1 ? glossiness : 1), 
+			metalness_(metalness) {}
 
-		void scatter(const Ray& ray_in, const HitRecord& hit_record, Color3& attenuation, Ray& scattered) const;
+		bool scatter(const Ray& ray_in, const HitRecord& hit_record, Color3& attenuation, Ray& scattered) const;
 
 	private:
 		Color3 albedo_;
+		double glossiness_;
+		bool metalness_;
 	};
 }
 

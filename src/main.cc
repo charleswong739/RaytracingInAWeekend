@@ -33,9 +33,12 @@ Color3 ray_color(const Ray& ray, const rtiaw::World& world, unsigned int depth) 
 		Ray scatter;
 		Color3 attenuation;
 
-		hit_record.material->scatter(ray, hit_record, attenuation, scatter);
-
-		return attenuation * ray_color(scatter, world, depth - 1);
+		if (hit_record.material->scatter(ray, hit_record, attenuation, scatter)) {
+			return attenuation * ray_color(scatter, world, depth - 1);
+		}
+		else {
+			return Color3(); // ray got absorbed
+		}
 	}
 
 	// lerp from blue to white depending on Y coordinate, draw sky
@@ -49,7 +52,7 @@ int main()
 {
 	// Image setup
 	const double aspect_ratio = 16.0f / 9.0f;
-	const unsigned int image_height = 720;
+	const unsigned int image_height = 1080;
 	const unsigned int image_width = (unsigned int)std::floor(image_height * aspect_ratio + 0.5);
 	const unsigned int samples_per_pixel = 100;
 	const unsigned int max_bounces = 20;
@@ -59,20 +62,20 @@ int main()
 
 	rtiaw::World world;
 
-	rtiaw::Material red_albedo(Color3(1.0, 0.0, 0.0));
-	rtiaw::Sphere red_sphere(Point3(-1, 0, -1), 0.25, &red_albedo);
+	rtiaw::Material gold_metal(Color3(0.949219, 0.785156, 0.40625), 1.0, true);
+	rtiaw::Sphere gold_sphere(Point3(-1, 0, -1), 0.25, &gold_metal);
 
 	rtiaw::Material green_albedo(Color3(0.0, 1.0, 0.0));
 	rtiaw::Sphere green_sphere(Point3(0, 0, -1), 0.25, &green_albedo);
 
-	rtiaw::Material blue_albedo(Color3(0.0, 0.0, 1.0));
-	rtiaw::Sphere blue_sphere(Point3(1, 0, -1), 0.25, &blue_albedo);
+	rtiaw::Material gray_fuzzy(Color3(0.18, 0.18, 0.18), 0.6, true);
+	rtiaw::Sphere gray_sphere(Point3(1, 0, -1), 0.25, &gray_fuzzy);
 
-	rtiaw::Material ground(Color3(0.4078, 0.7020, 0.4863));
+	rtiaw::Material ground(Color3(0.6, 0.6, 0.6), 1.0, true);
 
-	world.addObject(red_sphere);
+	world.addObject(gold_sphere);
 	world.addObject(green_sphere);
-	world.addObject(blue_sphere);
+	world.addObject(gray_sphere);
 	world.addObject(rtiaw::Sphere(Point3(0, -100.5, -1), 100, &ground));
 
 	// Camera setup
