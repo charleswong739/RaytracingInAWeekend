@@ -4,14 +4,14 @@
 #include <iostream>
 #include <vector>
 
-#include "bitmap.h"
-#include "camera.h"
-#include "color.h"
-#include "material.h"
-#include "ray.h"
-#include "util.h"
-#include "vec3.h"
-#include "world.h"
+#include "Raytracing/bitmap.h"
+#include "Raytracing/camera.h"
+#include "Raytracing/color.h"
+#include "Raytracing/material.h"
+#include "Raytracing/ray.h"
+#include "Raytracing/util.h"
+#include "Raytracing/vec3.h"
+#include "Raytracing/world.h"
 
 using rtiaw::Vec3;
 using rtiaw::Point3;
